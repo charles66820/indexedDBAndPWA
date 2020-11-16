@@ -9,7 +9,6 @@
       "sizes": "475x475"
     }
   ],
-  "url":"https://pwa.magicorp.fr/",
   "start_url": "/",
   "scope": "/",
   "background_color": "#3367D6",
@@ -20,7 +19,7 @@
       "name": "Magicorp website",
       "short_name": "Magicorp",
       "description": "The magicorp website",
-      "url": "https://www.magicorp.fr/",
+      "url": "/www.magicorp.fr/",
       "icons": [
         {
           "src": "/img/magikarp475.png",
