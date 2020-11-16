@@ -1,5 +1,7 @@
 if ("serviceWorker" in navigator)
-  navigator.serviceWorker.register("/js/sw.js");
+  navigator.serviceWorker.register("/js/sw.js", { scope: "/" }).catch(e =>
+    console.error("PWA registration failed with " + e)
+  );
 
 // Show install button and prepare install prompt
 window.addEventListener("beforeinstallprompt", e => {
