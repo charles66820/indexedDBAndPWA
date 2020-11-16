@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  pwaTest:
+    container_name: pwaTest
+    image: node:10-alpine
+    user: "node"
+    working_dir: /home/node/app
+    command: "/bin/sh -c \"npm install && npm start -s\""
+    volumes:
+      - '.:/home/node/app'
+    labels:
+      - "traefik.http.routers.pwaTest.rule=Host(`pwa.magicorp.fr`)"
+      - traefik.http.services.pwaTest.loadbalancer.server.port=8080
+    networks:
+      - backend
+
+networks:
+  backend:
+    external:
+      name: backend

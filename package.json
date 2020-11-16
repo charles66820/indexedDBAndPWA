@@ -1,0 +1,14 @@
+{
+  "name": "indexedb-and-pwa",
+  "version": "0.0.1",
+  "description": "Website for test indexedDB and PWA",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "author": "charles66820",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
