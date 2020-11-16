@@ -4,11 +4,12 @@
   "description": "Website for test indexedDB and PWA",
   "icons": [
     {
-      "src": "/magikarp475.png",
+      "src": "/img/magikarp475.png",
       "type": "image/png",
       "sizes": "475x475"
     }
   ],
+  "url":"https://pwa.magicorp.fr/",
   "start_url": "/",
   "scope": "/",
   "background_color": "#3367D6",
@@ -22,7 +23,7 @@
       "url": "https://www.magicorp.fr/",
       "icons": [
         {
-          "src": "/hsp475.png",
+          "src": "/img/magikarp475.png",
           "type": "image/png",
           "sizes": "475x475"
         }

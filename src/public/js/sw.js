@@ -1,5 +1,5 @@
 // sw for service worker
-importScripts("/cache-polyfill.js"); // For support multiple browser
+importScripts("/js/cache-polyfill.js"); // For support multiple browser
 
 self.addEventListener("install", e => {
   e.waitUntil(

@@ -1,6 +1,6 @@
 (() => {
   if ("serviceWorker" in navigator)
-    navigator.serviceWorker.register("/sw.js");
+    navigator.serviceWorker.register("/js/sw.js");
 
   // Show install button and prepare install prompt
   window.addEventListener("beforeinstallprompt", e => {
