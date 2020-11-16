@@ -6,11 +6,11 @@ self.addEventListener("install", e => {
     caches.open("v1").then(cache => {
       return cache.addAll([
         "/",
-        "/main.css",
-        "/main.js",
-        "/cache-polyfill.js",
-        "/karp.ico",
-        "/magikarp475.png"
+        "/css/main.css",
+        "/js/main.js",
+        "/js/cache-polyfill.js",
+        "/img/karp.ico",
+        "/img/magikarp475.png"
       ]);
     })
   );
