@@ -1,5 +1,5 @@
 if ("serviceWorker" in navigator)
-  navigator.serviceWorker.register("/js/sw.js", { scope: "/" }).catch(e =>
+  navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(e =>
     console.error("PWA registration failed with " + e)
   );
 
