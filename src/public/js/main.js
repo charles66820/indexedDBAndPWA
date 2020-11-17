@@ -1,7 +1,11 @@
 if ("serviceWorker" in navigator)
-  navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(e =>
-    console.error("PWA registration failed with " + e)
-  );
+  navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(() =>
+    document.querySelector("#pwastatus").innerText = "PWA successfully load"
+  ).catch(e => {
+    console.error("PWA registration failed with " + e);
+    document.querySelector("#pwastatus").innerText = "PWA error on load";
+  });
+else document.querySelector("#pwastatus").innerText = "PWA unsupported (your browser is to old)";
 
 // Show install button and prepare install prompt
 window.addEventListener("beforeinstallprompt", e => {
@@ -22,5 +26,6 @@ window.addEventListener("beforeinstallprompt", e => {
 
 // Show messege after PWA install
 window.addEventListener("appinstalled", () => {
+  document.querySelector("#pwastatus").innerText = "PWA install with success";
   alert("Thanks for install PWA");
 });
