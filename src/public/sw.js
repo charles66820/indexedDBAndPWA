@@ -28,10 +28,10 @@ let db = null;
 openDb();
 
 self.addEventListener("fetch", e => {
-  // Intercept /api/notes request
-  let notesOS = db.transaction("notes", "readwrite").objectStore("notes");
-
   console.log(e.request);
+  // Intercept /api/notes request
+  let notesOS = db? db.transaction("notes", "readwrite").objectStore("notes") : null;
+
   // if fetch we can clone response and put it in cache
   // GET /api/notes
   //notes.forEach(note => notesOS.add(note));
