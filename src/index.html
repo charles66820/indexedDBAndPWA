@@ -21,11 +21,22 @@
     </nav>
   </header>
   <main>
-    <section>
+    <article>
       <h2>PWA :</h2>
       <p>Status : <span id="pwastatus"></span></p>
       <button id="btnInstall" style="display:none">Install PWA</button>
-    </section>
+    </article>
+    <article>
+      <h2>Notes (for test indexedDB) :</h2>
+      <form name="addNote">
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit">Add</button>
+      </form>
+      <button id="sync" style="position:absolute;right:16px;top:16px">Sync</button>
+      <hr>
+      <div id="notes"></div>
+    </article>
   </main>
   <!-- <footer>
       <section>
@@ -36,6 +47,7 @@
       <section>
       </section>
     </footer> -->
+  <script src="/js/pwa.js" type="text/javascript"></script>
   <script src="/js/main.js" type="text/javascript"></script>
 </body>
 

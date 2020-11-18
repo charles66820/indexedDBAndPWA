@@ -1,31 +1,74 @@
-if ("serviceWorker" in navigator)
-  navigator.serviceWorker.register("/sw.js", { scope: "/" }).then(() =>
-    document.querySelector("#pwastatus").innerText = "PWA successfully load"
-  ).catch(e => {
-    console.error("PWA registration failed with " + e);
-    document.querySelector("#pwastatus").innerText = "PWA error on load";
-  });
-else document.querySelector("#pwastatus").innerText = "PWA unsupported (your browser is to old)";
+function $(s) {
+  return document.querySelector(s);
+}
 
-// Show install button and prepare install prompt
-window.addEventListener("beforeinstallprompt", e => {
-  e.preventDefault();
-  let btnInstall = document.querySelector("#btnInstall");
-  btnInstall.style.display = "block";
-
-  // Show the PWA install prompt
-  btnInstall.addEventListener("click", () => {
-    btnInstall.style.display = "none";
-    e.prompt();
-    e.userChoice.then(choiceResult => {
-      if (choiceResult.outcome === "accepted")
-        console.log("PWD install");
+// load notes
+function showNote() {
+  // fetch Like jQuery.ajax()
+  fetch("/api/notes", {
+    method: "GET"
+  }).then(res => res.json())
+    .then(res => {
+      $("#notes").firstChild.parentElement.removeChild($("#notes").firstChild);
+      $("#notes").insertAdjacentHTML("afterbegin", "<table></table>");
+      res.forEach(i =>
+        $("#notes").firstChild.insertAdjacentHTML(
+          "afterbegin",
+          `<tr>
+            <td>${i.title}</td>
+            <td>${i.description}</td>
+            <td><button data-id="${i.id}" onclick="deleteNote(this)">Delete</button></td>
+          </tr>`
+        )
+      );
+    }).catch(e => {
+      console.error("Error on load notes: " + e);
+      if ($("#notes").firstChild) $("#notes").firstChild.parentElement.removeChild($("#notes").firstChild);
+      $("#notes").insertAdjacentHTML("afterbegin", "<p>Error on load notes</p>")
     });
+}
+
+// Delete note
+function deleteNote(e) {
+  let id = e.dataset["id"];
+  fetch("/api/notes/" + id, {
+    method: "DELETE"
+  }).then(() => {
+    e.parentElement.parentElement.parentElement.removeChild(e.parentElement.parentElement);
+  }).catch(e => {
+    console.error("Error on delete note: " + e);
   });
+}
+
+// Add note
+$('form[name="addNote"]').addEventListener("submit", function (e) {
+  let title = this["title"].value;
+  let description = this["description"].value;
+  fetch("/api/notes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      title: title,
+      description: description
+    })
+  }).then(res => res.json())
+    .then(res => {
+      $("#notes").firstChild.insertAdjacentHTML(
+        "afterbegin",
+        `<tr>
+      <td>${title}</td>
+      <td>${description}</td>
+      <td><button data-id="${res.id}" onclick="deleteNote(this)">Delete</button></td>
+      </tr>`
+      )
+    }).catch(e => console.error("Error on create note: " + e));
+  e.preventDefault();
 });
 
-// Show messege after PWA install
-window.addEventListener("appinstalled", () => {
-  document.querySelector("#pwastatus").innerText = "PWA install with success";
-  alert("Thanks for install PWA");
+$("#sync").addEventListener("click", () => {
+  showNote();
 });
+
+showNote();

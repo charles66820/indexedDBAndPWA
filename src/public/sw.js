@@ -7,6 +7,7 @@ self.addEventListener("install", e => {
       return cache.addAll([
         "/",
         "/css/main.css",
+        "/js/pwa.js",
         "/js/main.js",
         "/js/cache-polyfill.js",
         "/img/karp.ico",
