@@ -9,7 +9,8 @@ function showNote() {
     method: "GET"
   }).then(res => res.json())
     .then(res => {
-      $("#notes").firstChild.parentElement.removeChild($("#notes").firstChild);
+      if ($("#notes").firstChild) $("#notes").firstChild.parentElement.removeChild($("#notes").firstChild);
+      if (!res.length) return $("#notes").insertAdjacentHTML("afterbegin", "<p>Error on load notes</p>");
       $("#notes").insertAdjacentHTML("afterbegin", "<table></table>");
       res.forEach(i =>
         $("#notes").firstChild.insertAdjacentHTML(
@@ -24,7 +25,7 @@ function showNote() {
     }).catch(e => {
       console.error("Error on load notes: " + e);
       if ($("#notes").firstChild) $("#notes").firstChild.parentElement.removeChild($("#notes").firstChild);
-      $("#notes").insertAdjacentHTML("afterbegin", "<p>Error on load notes</p>")
+      $("#notes").insertAdjacentHTML("afterbegin", "<p>Error on load notes</p>");
     });
 }
 
@@ -54,16 +55,8 @@ $('form[name="addNote"]').addEventListener("submit", function (e) {
       description: description
     })
   }).then(res => res.json())
-    .then(res => {
-      $("#notes").firstChild.insertAdjacentHTML(
-        "afterbegin",
-        `<tr>
-      <td>${title}</td>
-      <td>${description}</td>
-      <td><button data-id="${res.id}" onclick="deleteNote(this)">Delete</button></td>
-      </tr>`
-      )
-    }).catch(e => console.error("Error on create note: " + e));
+    .then(() => showNote())
+    .catch(e => console.error("Error on create note: " + e));
   e.preventDefault();
 });
 
