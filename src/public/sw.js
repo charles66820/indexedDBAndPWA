@@ -53,7 +53,7 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
-
+  console.log("fetch ");
   openDb(db => {
     if (e.request.method == "GET" && pathname == "/api/notes") {
       function getAllFromDb() {
