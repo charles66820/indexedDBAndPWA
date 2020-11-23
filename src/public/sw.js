@@ -16,11 +16,11 @@ function openDb() {
     notesOS.createIndex("sync", "scync", { unique: false });
 
     if (db.transaction) {
-      db.transaction.addEventListener("complete", () => console.info("All donne!"));
-      db.transaction.addEventListener("error", e => console.error("Error on transaction: " + e));
+      db.transaction.oncomplete = () => console.info("All donne!");
+      db.transaction.onerror = e => console.error("Error on transaction: " + e);
     }
-    db.addEventListener("close", e => console.error("Close on db: " + e));
-    db.addEventListener("error", e => console.error("Error on db: " + e));
+    db.onclose = e => console.error("Close on db: " + e);
+    db.onerror = e => console.error("Error on db: " + e);
   });
 }
 
