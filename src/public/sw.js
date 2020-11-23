@@ -5,7 +5,7 @@ importScripts("/js/cache-polyfill.js"); // For support multiple browser
 function openDb() {
   let dbRequest = indexedDB.open("noteOfflineDb", 1);
   dbRequest.addEventListener("error", e => console.error("Error on open noteOfflineDb: " + e));
-  dbRequest.addEventListener("upgradeneeded", e => {
+  return dbRequest.addEventListener("upgradeneeded", e => {
     db = e.target.result;
 
     // Create db schema
@@ -21,6 +21,7 @@ function openDb() {
     }
     db.onclose = e => console.error("Close on db: " + e);
     db.onerror = e => console.error("Error on db: " + e);
+    return db;
   });
 }
 
@@ -49,44 +50,44 @@ self.addEventListener("activate", e => {
 });
 */
 
-let db = null;
-openDb();
-
-self.addEventListener("fetch", e => {
+self.addEventListener("fetch", async e => {
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
   if (e.request.method == "GET" && pathname == "/api/notes") {
     function getFromDb() {
       return notesOS.getAll().addEventListener("success", notes => {
-        return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText" : "OK from indexedDB" }));
+        return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
       }).addEventListener("error", err => {
-        return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText" : "Error form Web worker" }));
+        return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
       });
     }
 
-    let notesOS = db ? db.transaction("notes", "readwrite").objectStore("notes") : null;
-    if (navigator.onLine) {
-      return fetch(e.request).then(res => res.json())
-        .then(res => {
-          res.forEach(i => notesOS.add({
-            id: i.id,
-            title: i.title,
-            description: i.description,
-            sync: true,
-            delete: false
-          }));
-          return res;
-        }).catch(err => {
-          console.error(err);
-          return getFromDb();
-        });
-    } else {
-      return getFromDb();
+    let db = await openDb();
+    if (db) {
+      let notesOS = db.transaction("notes", "readwrite").objectStore("notes");
+      if (navigator.onLine) {
+        return fetch(e.request).then(res => res.json())
+          .then(res => {
+            res.forEach(i => notesOS.add({
+              id: i.id,
+              title: i.title,
+              description: i.description,
+              sync: true,
+              delete: false
+            }));
+            return res;
+          }).catch(err => {
+            console.error(err);
+            return getFromDb();
+          });
+      } else {
+        return getFromDb();
+      }
+    } else if (e.request.method == "POST" && pathname == "/api/notes") {
+
+    } else if (e.request.method == "DELETE" && pathname == "/api/notes/:id") {
+
     }
-  } else if (e.request.method == "POST" && pathname == "/api/notes") {
-
-  } else if (e.request.method == "DELETE" && pathname == "/api/notes/:id") {
-
   }
 
   // If request is in cache returns cache else send request
