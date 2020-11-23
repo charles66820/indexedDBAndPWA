@@ -49,9 +49,9 @@ let db = null;
 openDb();
 
 self.addEventListener("fetch", e => {
-  let pathname = new URL(e.request).pathname;
+  //let pathname = new URL(e.request).pathname;
   // Intercept /api/notes request and put it in cache
-  if (e.request.method == "GET" && pathname == "/api/notes") {
+  if (e.request.method == "GET" && e.request.path == "/api/notes") {
     function getFromDb() {
       return notesOS.getAll().addEventListener("success", notes => {
         return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText" : "OK from indexedDB" }));
@@ -79,9 +79,9 @@ self.addEventListener("fetch", e => {
     } else {
       return getFromDb();
     }
-  } else if (e.request.method == "POST" && pathname == "/api/notes") {
+  } else if (e.request.method == "POST" && e.request.path == "/api/notes") {
 
-  } else if (e.request.method == "DELETE" && pathname == "/api/notes/:id") {
+  } else if (e.request.method == "DELETE" && e.request.path == "/api/notes/:id") {
 
   }
 
