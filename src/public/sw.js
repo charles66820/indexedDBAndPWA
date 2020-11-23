@@ -52,23 +52,25 @@ self.addEventListener("activate", e => {
 });
 */
 
+let db = openDb().then( db => db);
+console.log(db);
+let notesOS = db.transaction.objectStore("notes"); //("notes", "readwrite")
+console.log(notesOS);
+
 self.addEventListener("fetch", async e => {
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
-  let db = await openDb().then( db => db);
   if (db) {
     if (e.request.method == "GET" && pathname == "/api/notes") {
-      function getAllFromDb() {
-        return notesOS.getAll().addEventListener("success", notes => {
+      async function getAllFromDb() {
+        return await notesOS.getAll().addEventListener("success", notes => {
           return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
         }).addEventListener("error", err => {
           return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
         });
       }
-      console.log(db);
-      let notesOS = db.transaction.objectStore("notes"); //("notes", "readwrite")
       if (navigator.onLine) {
-        return fetch(e.request).then(res => res.json())
+        return await fetch(e.request).then(res => res.json())
           .then(res => {
             res.forEach(i => notesOS.add({
               id: i.id,
