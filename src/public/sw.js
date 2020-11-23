@@ -50,7 +50,7 @@ self.addEventListener("activate", e => {
 });
 */
 
-self.addEventListener("fetch", async e => {
+self.addEventListener("fetch", e => {
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
   if (e.request.method == "GET" && pathname == "/api/notes") {
@@ -62,7 +62,8 @@ self.addEventListener("fetch", async e => {
       });
     }
 
-    let db = await openDb();
+    let db = openDb();
+    console.log(db);
     if (db) {
       let notesOS = db.transaction("notes", "readwrite").objectStore("notes");
       if (navigator.onLine) {
