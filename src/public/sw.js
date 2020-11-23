@@ -7,6 +7,8 @@ function openDb(callback) {
   dbRequest.addEventListener("error", e => console.error("Error on open noteOfflineDb: " + e));
   dbRequest.addEventListener("upgradeneeded", e => {
     let db = e.target.result;
+    db.onclose = e => console.error("Close on db: " + e);
+    db.onerror = e => console.error("Error on db: " + e);
 
     // Create db schema
     let notesOS = db.createObjectStore("notes"); // , { keyPath: "id", autoIncrement: true }
@@ -19,8 +21,6 @@ function openDb(callback) {
       db.transaction.oncomplete = () => console.info("All donne!");
       db.transaction.onerror = e => console.error("Error on transaction: " + e);
     }
-    db.onclose = e => console.error("Close on db: " + e);
-    db.onerror = e => console.error("Error on db: " + e);
     callback(db);
   });
 }
@@ -65,7 +65,7 @@ self.addEventListener("fetch", e => {
       }
       console.log(db);
       if (db) {
-        let notesOS = db.transaction("notes", "readwrite").objectStore("notes");
+        let notesOS = db.transaction.objectStore("notes"); //("notes", "readwrite")
         if (navigator.onLine) {
           return fetch(e.request).then(res => res.json())
             .then(res => {
