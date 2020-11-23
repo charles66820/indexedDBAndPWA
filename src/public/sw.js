@@ -54,16 +54,16 @@ self.addEventListener("fetch", async e => {
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
   return openDb(db => {
-    if (e.request.method == "GET" && pathname == "/api/notes") {
-      function getAllFromDb() {
-        return notesOS.getAll().addEventListener("success", notes => {
-          return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
-        }).addEventListener("error", err => {
-          return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
-        });
-      }
-      console.log(db);
-      if (db) {
+    if (db) {
+      if (e.request.method == "GET" && pathname == "/api/notes") {
+        function getAllFromDb() {
+          return notesOS.getAll().addEventListener("success", notes => {
+            return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
+          }).addEventListener("error", err => {
+            return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
+          });
+        }
+        console.log(db);
         let notesOS = db.transaction.objectStore("notes"); //("notes", "readwrite")
         if (navigator.onLine) {
           return fetch(e.request).then(res => res.json())
@@ -93,6 +93,11 @@ self.addEventListener("fetch", async e => {
           return res || fetch(e.request);
         }));
       }
+    } else {
+      // If request is in cache returns cache else send request
+      return e.respondWith(caches.match(e.request).then(res => { // For pwa
+        return res || fetch(e.request);
+      }));
     }
   });
 });
