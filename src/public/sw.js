@@ -5,7 +5,7 @@ importScripts("/js/cache-polyfill.js"); // For support multiple browser
 function openDb(callback) {
   let dbRequest = indexedDB.open("noteOfflineDb", 1);
   dbRequest.addEventListener("error", e => console.error("Error on open noteOfflineDb: " + e));
-  dbRequest.addEventListener("upgradeneeded", e => {
+  return dbRequest.addEventListener("upgradeneeded", e => {
     let db = e.target.result;
     db.onclose = e => console.error("Close on db: " + e);
     db.onerror = e => console.error("Error on db: " + e);
@@ -21,7 +21,7 @@ function openDb(callback) {
       db.transaction.oncomplete = () => console.info("All donne!");
       db.transaction.onerror = e => console.error("Error on transaction: " + e);
     }
-    callback(db);
+    return callback(db);
   });
 }
 
@@ -50,10 +50,9 @@ self.addEventListener("activate", e => {
 });
 */
 
-self.addEventListener("fetch", e => {
+self.addEventListener("fetch", async e => {
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
-  console.log("fetch ");
   openDb(db => {
     if (e.request.method == "GET" && pathname == "/api/notes") {
       function getAllFromDb() {
@@ -88,13 +87,12 @@ self.addEventListener("fetch", e => {
 
       } else if (e.request.method == "DELETE" && pathname == "/api/notes/:id") {
 
+      } else {
+        // If request is in cache returns cache else send request
+        return e.respondWith(caches.match(e.request).then(res => { // For pwa
+          return res || fetch(e.request);
+        }));
       }
-
     }
   });
-
-  // If request is in cache returns cache else send request
-  return e.respondWith(caches.match(e.request).then(res => { // For pwa
-    return res || fetch(e.request);
-  }));
 });
