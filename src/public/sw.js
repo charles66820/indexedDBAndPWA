@@ -6,7 +6,7 @@ function openDb() {
   let dbRequest = indexedDB.open("noteOfflineDb", 1);
   dbRequest.addEventListener("error", e => console.error("Error on open noteOfflineDb: " + e));
   return dbRequest.addEventListener("upgradeneeded", e => {
-    db = e.target.result;
+    let db = e.target.result;
 
     // Create db schema
     let notesOS = db.createObjectStore("notes"); // , { keyPath: "id", autoIncrement: true }
