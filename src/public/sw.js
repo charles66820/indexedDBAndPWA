@@ -18,11 +18,11 @@ self.addEventListener("install", e => {
   );
 });
 
-let dbPromise;
+
 self.addEventListener("activate", e => {
   e.waitUntil(() => {
     // Create db
-    dbPromise = indexedDB.open("noteOfflineDb", 1, db => {
+    indexedDB.open("noteOfflineDb", 1, db => {
       // Create db schema
       let store = db.createObjectStore("notes"); // , { keyPath: "id", autoIncrement: true }
       store.createIndex("id", "id", { unique: false });
@@ -39,9 +39,11 @@ self.addEventListener("fetch", async e => {
   if (e.request.method == "GET" && pathname == "/api/notes") {
 
     function getAllFromDb() {
-      return dbPromise.then(function (db) {
+      return indexedDB.open("noteOfflineDb", 1, function (db) {
         let tx = db.transaction(["notes"], "readonly");
         let store = tx.objectStore("notes");
+        console.log(store);
+        console.log(store.getAll());
         return store.getAll();
       }).then(notes => {
         return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
@@ -53,7 +55,7 @@ self.addEventListener("fetch", async e => {
     if (navigator.onLine) {
       return await fetch(e.request).then(res => res.json())
         .then(res => {
-          dbPromise.then(function (db) {
+          indexedDB.open("noteOfflineDb", 1).then(function (db) {
             let tx = db.transaction(["notes"], "readwrite");
             let store = tx.objectStore("notes");
             return Promise.all(res.map(function (i) {
