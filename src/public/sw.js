@@ -43,14 +43,12 @@ self.addEventListener("fetch", async e => {
         let tx = db.transaction(["notes"], "readonly");
         let store = tx.objectStore("notes");
         console.log(store);
-        console.log(store.getAll());
-        return store.getAll();
-      }).then(notes => {
+        let notes = store.getAll();
+        console.log(notes);
         return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
-      }).cache(err => {
-        return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
       });
     }
+    //return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
 
     if (navigator.onLine) {
       return await fetch(e.request).then(res => res.json())
