@@ -38,9 +38,10 @@ self.addEventListener("fetch", async e => {
   // Intercept /api/notes request and put it in cache
   if (e.request.method == "GET" && pathname == "/api/notes") {
 
-    function getAllFromDb() {
+    async function getAllFromDb() {
       return indexedDB.open("noteOfflineDb", 1, function (db) {
         let tx = db.transaction(["notes"], "readonly");
+        console.log("toto");
         let store = tx.objectStore("notes");
         console.log(store);
         let notes = store.getAll();
@@ -48,6 +49,7 @@ self.addEventListener("fetch", async e => {
         return e.respondWith(new Response(JSON.stringify(notes), { "status": 200, "statusText": "OK from indexedDB" }));
       });
     }
+    return await getAllFromDb();
     //return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
 
     if (navigator.onLine) {
