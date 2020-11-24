@@ -51,27 +51,29 @@ self.addEventListener("fetch", e => {
     //return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
 
     if (navigator.onLine) {
-      return await fetch(e.request).then(res => res.json())
-        .then(res => {
-          indexedDB.open("noteOfflineDb", 1).then(function (db) {
+      return fetch(e.request)
+        .then(rres => {
+          res = rres.json();
+          indexedDB.open("noteOfflineDb", 1).then(async function (db) {
             let tx = db.transaction(["notes"], "readwrite");
             let store = tx.objectStore("notes");
-            return Promise.all(res.map(function (i) {
-              return store.add({
-                id: i.id,
-                title: i.title,
-                description: i.description,
-                sync: true,
-                delete: false
-              });
-            })
-            ).catch(function (e) {
+            try {
+              await Promise.all(res.map(function (i) {
+                store.add({
+                  id: i.id,
+                  title: i.title,
+                  description: i.description,
+                  sync: true,
+                  delete: false
+                });
+              })
+              );
+            } catch (e) {
               tx.abort();
               console.error(e);
               return e.respondWith(new Response(JSON.stringify(err), { "status": 500, "statusText": "Error form Web worker" }));
-            }).then(function () {
-              console.log('All items added successfully!');
-            });
+            }
+            console.log('All items added successfully!');
           });
         }).catch(err => {
           console.error(err);
