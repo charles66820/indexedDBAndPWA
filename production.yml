@@ -2,6 +2,7 @@ version: "2"
 
 services:
   pwaTest:
+    restart: always
     labels:
       - traefik.http.routers.pwaTest.middlewares=https-redirectscheme
       - "traefik.http.routers.pwaTest-secure.rule=Host(`pwa.magicorp.fr`)"
