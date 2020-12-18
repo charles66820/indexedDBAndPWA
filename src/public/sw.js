@@ -3,6 +3,7 @@ importScripts("/js/cache-polyfill.js"); // For support multiple browser
 
 // For pwa
 self.addEventListener("install", e => {
+  console.log("install : " + e);
   e.waitUntil(
     caches.open("v1").then(cache => {
       return cache.addAll([
@@ -20,6 +21,7 @@ self.addEventListener("install", e => {
 
 
 self.addEventListener("activate", e => {
+  console.log("activate : " + e);
   e.waitUntil(() => {
     // Create db
     indexedDB.open("noteOfflineDb", 1, db => {
@@ -33,7 +35,12 @@ self.addEventListener("activate", e => {
   });
 });
 
+self.addEventListener("message", msg => console.log("msg : " + msg));
+self.addEventListener("sync", e => console.log("sync : " + e));
+self.addEventListener("push", e => console.log("push : " + e));
+
 self.addEventListener("fetch", e => {
+  console.log("fetch : " + e);
   let pathname = new URL(e.request.url).pathname;
   // Intercept /api/notes request and put it in cache
   if (e.request.method == "GET" && pathname == "/api/notes") {
