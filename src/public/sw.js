@@ -1,6 +1,9 @@
 // sw for service worker
 importScripts("/js/cache-polyfill.js"); // For support multiple browser
 
+console.log("yes :");
+console.log(self);
+
 // For pwa
 self.addEventListener("install", e => {
   console.log("install : " + e);
@@ -35,9 +38,6 @@ self.addEventListener("activate", e => {
   });
 });
 
-self.addEventListener("message", msg => console.log("msg : " + msg));
-self.addEventListener("sync", e => console.log("sync : " + e));
-self.addEventListener("push", e => console.log("push : " + e));
 
 self.addEventListener("fetch", e => {
   console.log("fetch : " + e);
