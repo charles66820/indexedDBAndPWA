@@ -2,6 +2,10 @@
 
 This projet is website for test indexedDB and PWA.
 
+## Worker module link
+
+<https://developer.chrome.com/docs/workbox/modules/>
+
 ## Start this application
 
 ### With docker
